@@ -17,4 +17,4 @@ for await ( const hit of keyboardInput() ) {
 }
 
 stopListeningToKeyboard();
-``
+```
