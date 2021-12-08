@@ -7,7 +7,7 @@ Currently, special characters such as arrow keys use a native library on Windows
 
 Example usage:
 ```ts
-import { keyboardInput, beginListeningToKeyboard, stopListeningToKeyboard } from "https://deno.land/x/deno_input";
+import { keyboardInput, beginListeningToKeyboard, stopListeningToKeyboard } from "https://deno.land/x/deno_input/mod.ts";
 
 beginListeningToKeyboard();
 for await ( const hit of keyboardInput() ) {
