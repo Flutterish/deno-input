@@ -14,14 +14,17 @@ export type KeyHit = ({
 	altPressed?: boolean
 } | {
 	type: 'control',
-	action: Action
-		
+	action: Action,
+	controlPressed?: boolean
+} | {
+	type: 'end of input'
 } | {
 	type: 'unknown'
 }) & { code: ArrayLike<number> };
 
 const controlCodes: {[code: number]: Action} = {
 	127: 'backspace',
+	23: 'backspace',
 	8: 'backspace',
 	13: 'enter',
 	9: 'tab',
@@ -88,6 +91,10 @@ function parseKeyHits ( code: Uint8Array, count: number ): KeyHit[] {
 		}
 	}
 
+	arr.push( {
+		type: 'end of input',
+		code: []
+	} );
 	return arr;
 };
 
@@ -124,6 +131,7 @@ function parseKeyHit ( code: Uint8Array, count: number ): KeyHit {
 		return {
 			type: 'control',
 			action: controlCodes[ key ],
+			controlPressed: key == 23,
 			code: code
 		};
 	}
