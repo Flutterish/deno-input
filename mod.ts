@@ -15,7 +15,8 @@ export type KeyHit = ({
 } | {
 	type: 'control',
 	action: Action,
-	controlPressed?: boolean
+	controlPressed?: boolean,
+	altPressed?: boolean
 } | {
 	type: 'end of input'
 } | {
@@ -28,7 +29,8 @@ const controlCodes: {[code: number]: Action} = {
 	8: 'backspace',
 	13: 'enter',
 	9: 'tab',
-	27: 'escape'
+	27: 'escape',
+	10: 'enter'
 };
 
 const extendedCodes0: {[code: number]: Action} = {
@@ -61,6 +63,57 @@ const extendedCodes0: {[code: number]: Action} = {
 	83: 'delete'
 };
 
+const extendedControlCodes0: {[code: number]: Action} = {
+	145: 'down',
+	115: 'left',
+	116: 'right',
+	141: 'up',
+
+	94: 'F1',
+	95: 'F2',
+	96: 'F3',
+	97: 'F4',
+	98: 'F5',
+	99: 'F6',
+	100: 'F7',
+	101: 'F8',
+	102: 'F9',
+	103: 'F10',
+
+	119: 'home',
+	132: 'page up',
+	117: 'end',
+	118: 'page down',
+
+	146: 'insert',
+	147: 'delete'
+};
+
+const extendedAltCodes0: {[code: number]: Action} = {
+	104: 'F1',
+	105: 'F2',
+	106: 'F3',
+	107: 'F4',
+	108: 'F5',
+	109: 'F6',
+	110: 'F7',
+	111: 'F8',
+	112: 'F9',
+	113: 'F10',
+
+	162: 'insert',
+	151: 'home',
+	153: 'page up',
+	163: 'delete',
+	159: 'end',
+	161: 'page down',
+
+	155: 'left',
+	152: 'up',
+	157: 'right',
+	160: 'down'
+};
+
 const extendedCodes224: {[code: number]: Action} = {
 	133: 'F11',
 	134: 'F12',
@@ -73,7 +126,34 @@ const extendedCodes224: {[code: number]: Action} = {
 
 	82: 'insert',
 
-	83: 'delete'
+	83: 'delete',
+
+	75: 'left',
+	72: 'up',
+	77: 'right',
+	80: 'down'
+};
+
+
+const extendedControlCodes224: {[code: number]: Action} = {
+	137: 'F11',
+	138: 'F12',
+
+	141: 'up',
+	115: 'left',
+	116: 'right',
+	145: 'down',
+
+	146: 'insert',
+	147: 'delete',
+	119: 'home',
+	117: 'end',
+	118: 'page down'
+};
+
+const extendedAltCodes224: {[code: number]: Action} = {
+	139: 'F11',
+	140: 'F12'
 };
 
 function parseKeyHits ( code: Uint8Array, count: number ): KeyHit[] {
@@ -81,7 +161,7 @@ function parseKeyHits ( code: Uint8Array, count: number ): KeyHit[] {
 
 	let i = 0;
 	while ( i < count ) {
-		if ( code[i] == 0 || code[i] == 244 ) {
+		if ( code[i] == 0 || code[i] == 224 ) {
 			arr.push( parseKeyHit( code.subarray(i, i + 2), 2 ) );
 			i += 2; 
 		}
@@ -110,10 +190,46 @@ function parseKeyHit ( code: Uint8Array, count: number ): KeyHit {
 			};
 		}
 
+		if ( code[0] == 0 && extendedControlCodes0[code[1]] != undefined ) {
+			return {
+				type: 'control',
+				controlPressed: true,
+				action: extendedControlCodes0[code[1]],
+				code: code
+			};
+		}
+
+		if ( code[0] == 0 && extendedAltCodes0[code[1]] != undefined ) {
+			return {
+				type: 'control',
+				altPressed: true,
+				action: extendedAltCodes0[code[1]],
+				code: code
+			};
+		}
+
 		if ( code[0] == 224 && extendedCodes224[code[1]] != undefined ) {
 			return {
 				type: 'control',
 				action: extendedCodes224[code[1]],
+				code: code
+			};
+		}
+
+		if ( code[0] == 224 && extendedControlCodes224[code[1]] != undefined ) {
+			return {
+				type: 'control',
+				controlPressed: true,
+				action: extendedControlCodes224[code[1]],
+				code: code
+			};
+		}
+
+		if ( code[0] == 224 && extendedAltCodes224[code[1]] != undefined ) {
+			return {
+				type: 'control',
+				altPressed: true,
+				action: extendedAltCodes224[code[1]],
 				code: code
 			};
 		}
@@ -131,7 +247,7 @@ function parseKeyHit ( code: Uint8Array, count: number ): KeyHit {
 		return {
 			type: 'control',
 			action: controlCodes[ key ],
-			controlPressed: key == 23,
+			controlPressed: key == 23 || key == 127 || key == 10,
 			code: code
 		};
 	}
