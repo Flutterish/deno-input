@@ -289,8 +289,8 @@ export function beginListeningToKeyboard () {
 	}
 	isListening = true;
 	
-	Deno.setRaw( Deno.stdin.rid, true );
-	cleanupActions.push( () => Deno.setRaw( Deno.stdin.rid, false ) );
+	Deno.stdin.setRaw( Deno.stdin.rid, true );
+	cleanupActions.push( () => Deno.stdin.setRaw( Deno.stdin.rid, false ) );
 }
 
 export async function* keyboardInput () {
