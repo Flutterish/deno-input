@@ -312,8 +312,15 @@ export async function* keyboardInput () {
 		const nextKey = conio.symbols._getch as () => number;
 
 		while ( true ) {
+			await new Promise( async r => {
+				while ( !available() ) {
+					await new Promise( r => setTimeout( () => r(undefined), 1) );
+				}
+				r(undefined);
+			} );
+
 			let n = 0;
-			buffer[n++] = await nextKey();
+			buffer[n++] = nextKey();
 			while ( available() ) {
 				buffer[n++] = nextKey();
 			}
